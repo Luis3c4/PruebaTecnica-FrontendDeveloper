@@ -1,30 +1,44 @@
-import { useGetCharactersQuery } from "./api/postApi";
+
+import { useState } from "react";
+import { useGetCharactersQuery, useGetCharactersByNameQuery } from "./api/postApi";
+import Busqueda from "./components/busqueda";
+import Header from "./components/header";
+import Carts from "./components/carts";
+import Layout from "./components/layout";
+import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
+import Docs from "./sections/docs";
+import Home from "./sections/home";
+import Suport from "./sections/Suport";
 function App() {
-  const {data} = useGetCharactersQuery()
-  console.log("data", data);
-  console.log(data?.results);
+  const [searchName, setSearchName] = useState("");
+  const { data: allData, isLoading: loadingAll } = useGetCharactersQuery();
+  const { data: searchData, isLoading: loadingSearch, error: searchError } = useGetCharactersByNameQuery(searchName, { skip: !searchName });
+
+  // Decide qué datos mostrar
+  const dataToShow = searchName ? searchData : allData;
+  console.log(dataToShow);
+  const isLoading = searchName ? loadingSearch : loadingAll;
+
+  const router= createBrowserRouter(
+    createRoutesFromElements(
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="docs" element={<Docs />} />
+        <Route path="suport" element={<Suport />} />
+      </Route>
+    )
+  )
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-blue-400 text-center m-5">
-        Prueba Técnica - Frontend Developer
-      </h1>
-      <div className="grid grid-cols-3 gap-4">
-        {data?.results.map((item) => (
-          <div key={item.id} className="flex ">
-            <div className="">
-              <img src={item.image} alt={item.name} />
-            </div>
-            <div className="">
-              <h2 className="text-2xl font-bold">{item.name}</h2>
-              <p>
-                {item.status} - {item.species} - {item.gender}
-              </p>
-              <p className="text-sm text-gray-500">Last known location:</p>
-              <p className="text-sm">{item.origin.name}</p>
-            </div>
-          </div>
-        ))}
+    <div className="min-h-screen bg-gray-900 text-white">
+      <Header />
+      {/* Hero Section */}
+      <div className=" py-16 px-6 mb-6">
+        <h1 className="text-6xl md:text-8xl font-bold text-center mb-4">
+          The Rick and Morty API
+        </h1>
       </div>
+      <Busqueda onSearch={setSearchName} />
+      <Carts isLoading={isLoading} searchError={!!searchError} dataToShow={dataToShow} />
     </div>
   );
 }

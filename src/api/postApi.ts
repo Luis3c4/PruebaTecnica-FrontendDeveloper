@@ -8,6 +8,7 @@ type Character = {
     status: string;
     species: string;
     gender: string;
+    location: { name: string };
     origin: { name: string };
   }[];
 };
@@ -18,6 +19,9 @@ export const postApi = createApi({
     getCharacters: builder.query<Character, void>({
       query: () => "/character",
     }),
+    getCharactersByName: builder.query<Character, string>({
+      query: (name) => `/character/?name=${name}`,
+    }),
   }),
 });
-export const { useGetCharactersQuery } = postApi;
+export const { useGetCharactersQuery, useGetCharactersByNameQuery } = postApi;
