@@ -1,17 +1,31 @@
+import { Link } from "react-router-dom";
+import NavButton from "./navButton";
 
 type Character = {
-  results: {
-    id: number;
-    name: string;
-    image: string;
-    status: string;
-    species: string;
-    gender: string;
-    location: { name: string };
-    origin: { name: string };
-  }[];
+  id: number;
+  name: string;
+  image: string;
+  status: string;
+  species: string;
+  gender: string;
+  location: { name: string };
+  origin: { name: string };
 };
-function Cars({ isLoading, searchError, dataToShow }:{isLoading:boolean, searchError: boolean, dataToShow: Character | undefined}) {
+type CharactersResponse = {
+  count: number;
+  pages: number;
+  next: string | null;
+  prev: string | null;
+  results: Character[];
+};
+type CarsProps = {
+  isLoading: boolean;
+  searchError: boolean;
+  dataToShow: CharactersResponse | undefined;
+  currentPage: number;
+  onPageChange: (page:number)=>void
+};
+function Cars({ isLoading, searchError, dataToShow, currentPage, onPageChange}: CarsProps) {
   return (
     <div className="max-w-11/12 mx-auto  pb-16">
       {isLoading && <div className="text-center">Cargando...</div>}
@@ -20,10 +34,18 @@ function Cars({ isLoading, searchError, dataToShow }:{isLoading:boolean, searchE
           No se encontraron personajes.
         </div>
       )}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {dataToShow?.results?.map((item) => (
-          <div key={item.id} className="bg-gray-800 rounded-lg overflow-hidden">
-            <div className="flex h-full">
+      <NavButton
+        currentPage={currentPage}
+        onPrev={() => onPageChange(currentPage - 1)}
+        onNext={() => onPageChange(currentPage + 1)}
+      />
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {dataToShow?.results.map((item) => (
+          <div
+            key={item.id}
+            className="bg-gray-800 rounded-lg overflow-hidden hover:scale-105 transition-transform cursor-pointer"
+          >
+            <Link to={`/character/${item.id}`} className="flex h-full">
               <div className="w-1/2">
                 <img
                   src={item.image}
@@ -56,7 +78,7 @@ function Cars({ isLoading, searchError, dataToShow }:{isLoading:boolean, searchE
                   <p className="text-sm">{item.origin.name}</p>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
         ))}
       </div>

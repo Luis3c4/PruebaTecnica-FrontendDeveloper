@@ -26,7 +26,7 @@ function Busqueda({ onSearch }: BusquedaProps) {
                         placeholder="Buscar personaje por nombre..."
                         className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                     />
-                    <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-6">
+                    <Button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-6  cursor-pointer">
                         <Search className="h-4 w-4" />
                         Buscar
                     </Button>
