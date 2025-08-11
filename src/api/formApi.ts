@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-type FormData = {
+type DonationBase = {
   name: string;
   email: string;
   amount: number;
   message: string;
-  id: number;
+};
+type Donation = DonationBase & {
+  id: string;
 };
 export const formApi = createApi({
   reducerPath: "formApi",
@@ -13,15 +15,11 @@ export const formApi = createApi({
   }),
   tagTypes: ["Donation"],
   endpoints: (builder) => ({
-    getDonations: builder.query<FormData[], void>({
+    getDonations: builder.query<Donation[], void>({
       query: () => "/donations",
-      transformResponse: (response: FormData[]) => {
-        console.log(response);
-        return response;
-      },
       providesTags: ["Donation"],
     }),
-    createDonation: builder.mutation<FormData, Omit<FormData, "id">>({
+    createDonation: builder.mutation<Donation, DonationBase>({
       query: (newDonation) => ({
         url: "/donations",
         method: "POST",
@@ -29,14 +27,14 @@ export const formApi = createApi({
       }),
       invalidatesTags: ["Donation"],
     }),
-    deleteDonation: builder.mutation<void, number>({
+    deleteDonation: builder.mutation<void, string>({
       query: (id) => ({
         url: `/donations/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Donation"],
     }),
-    updateDonation: builder.mutation<FormData, FormData>({
+    updateDonation: builder.mutation<DonationBase, Donation>({
       query: (donation) => ({
         url: `/donations/${donation.id}`,
         method: "PUT",

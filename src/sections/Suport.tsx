@@ -14,7 +14,6 @@ const donationSchema = z.object({
   email: z.email("Correo inválido"),
   amount: z.number().positive("Monto inválido"),
   message: z.string().optional(),
-  id: z.number().optional(),
 });
 
 type Support = {
@@ -23,6 +22,9 @@ type Support = {
   amount: number;
   message: string;
 };
+type ValidationErrors = {
+  [K in keyof Support]?: string;
+};
 function Support() {
   const [formData, setFormData] = useState<Support>({
     name: "",
@@ -30,6 +32,10 @@ function Support() {
     amount: 0,
     message: "",
   });
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
+    {}
+  );
+
   // const [editingId, setEditingId] = useState<number | null>(null);
 
   const {
@@ -38,64 +44,67 @@ function Support() {
     error: fetchError,
   } = useGetDonationsQuery();
   console.log(donations);
-  // const [createDonation, { isLoading, error }] = useCreateDonationMutation();
-  // const [deleteDonation] = useDeleteDonationMutation();
+  const [createDonation, { isLoading, error }] = useCreateDonationMutation();
+  const [deleteDonation] = useDeleteDonationMutation();
   // const [updateDonation] = useUpdateDonationMutation();
 
-  // const handleChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: name === "amount" ? Number(value) : value,
-  //   });
-  // };
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === "amount" ? parseFloat(value) : value,
+    });
+  };
+  const validateForm = (): boolean => {
+    try {
+      // Validar con Zod
+      donationSchema.parse(formData);
+      setValidationErrors({}); // Limpiar errores si la validación pasa
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // Convertir errores de Zod a nuestro formato
+        const errors: ValidationErrors = {};
+        error.issues.forEach((err) => {
+          if (err.path.length > 0) {
+            const field = err.path[0] as keyof Support;
+            errors[field] = err.message;
+          }
+        });
+        setValidationErrors(errors);
+      }
+      return false;
+    }
+  };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   const validation = donationSchema.omit({ id: true }).safeParse(formData);
-  //   console.log(validation);
-  //   if (!validation.success) {
-  //     alert(validation.error.issues.map((err) => err.message).join(", "));
-  //     return;
-  //   }
-  //   try {
-  //     if (editingId) {
-  //       // await updateDonation({
-  //       //   ...formData,
-  //       //   id: editingId,
-  //       // }).unwrap();
-  //       // setEditingId(null);
-  //     } else {
-  //       await createDonation({
-  //         name: formData.name,
-  //         email: formData.email,
-  //         amount: formData.amount,
-  //         message: formData.message,
-  //       }).unwrap();
-  //     }
-  //     setFormData({ name: "", email: "", amount: 0, message: "" });
-  //   } catch (err) {
-  //     console.error("Error creando donación:", err);
-  //   }
-  // };
-  // const handleDelete = async (id: number) => {
-  //   try {
-  //     await deleteDonation(id).unwrap();
-  //   } catch (err) {
-  //     console.error("Error eliminando donación:", err);
-  //   }
-  // };
-  // const handleUpdate = async (donation: Support) => {
-  //   setFormData({
-  //     name: donation.name,
-  //     email: donation.email,
-  //     amount: donation.amount,
-  //     message: donation.message || "",
-  //   });
-  //   setEditingId(donation.id || null);
-  // };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Validar formulario antes de enviar
+    if (!validateForm()) {
+      console.log("Formulario inválido:", validationErrors);
+      return; // No enviar si hay errores
+    }
+    try {
+      await createDonation({
+        name: formData.name,
+        email: formData.email,
+        amount: formData.amount,
+        message: formData.message,
+      }).unwrap();
+      setFormData({ name: "", email: "", amount: 0, message: "" });
+    } catch (e) {
+      console.error("Error creando donación:", e);
+    }
+  };
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDonation(id).unwrap();
+    } catch (err) {
+      console.error("Error eliminando donación:", err);
+    }
+  };
   return (
     <div className="max-w-5xl mx-auto">
       <h1 className="text-4xl font-bold text-gray-300 mb-4">
@@ -120,43 +129,79 @@ function Support() {
         </div>
       </main>
       <div className=" max-w-2xs mx-auto mt-8">
-        <form className=" flex flex-col gap-4">
-          <input
-            name="name"
-            placeholder="Nombre"
-            value={formData.name}
-            
-            className="border border-gray-300 p-2 rounded"
-          />
-          <input
-            name="email"
-            placeholder="Correo"
-            value={formData.email}
-            
-            className="border border-gray-300 p-2 rounded"
-          />
-          <input
-            name="amount"
-            placeholder="Cantidad"
-            value={formData.amount.toString()}
-            type="number"
-            className="border border-gray-300 p-2 rounded"
-          />
-          <textarea
-            name="message"
-            placeholder="Mensaje opcional"
-            value={formData.message}
-            
-            className="border border-gray-300 p-2 rounded"
-          />
+        <form className=" flex flex-col gap-4" onSubmit={handleSubmit}>
+          <div>
+            <input
+              name="name"
+              placeholder="Nombre"
+              value={formData.name}
+              onChange={handleChange}
+              className={` w-full p-2 border rounded ${
+                validationErrors.name ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {validationErrors.name && (
+              <p className="text-red-500 text-sm mt-1">
+                {validationErrors.name}
+              </p>
+            )}
+          </div>
+          <div>
+            <input
+              name="email"
+              placeholder="Correo"
+              value={formData.email}
+              onChange={handleChange}
+              className={`w-full p-2 border rounded ${
+                validationErrors.email ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {validationErrors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {validationErrors.email}
+              </p>
+            )}
+          </div>
+          <div>
+            <input
+              name="amount"
+              placeholder="Cantidad"
+              value={formData.amount}
+              type="number"
+              onChange={handleChange}
+              className={`w-full p-2 border rounded ${
+                validationErrors.amount ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {validationErrors.amount && (
+              <p className="text-red-500 text-sm mt-1">
+                {validationErrors.amount}
+              </p>
+            )}
+          </div>
+          <div>
+            <textarea
+              name="message"
+              placeholder="Mensaje opcional"
+              value={formData.message}
+              onChange={handleChange}
+              className={` w-full p-2 border rounded ${
+                validationErrors.message ? "border-red-500" : "border-gray-300"
+              }`}
+            />
+            {validationErrors.message && (
+              <p className="text-red-500 text-sm mt-1">
+                {validationErrors.message}
+              </p>
+            )}
+          </div>
           <button
             type="submit"
             className="bg-green-600 px-4 py-2 rounded hover:bg-green-700"
           >
-            boton
-            { /*isLoading ? "Enviando..." : editingId ? "Actualizar" : "Donar"*/}
+            {isLoading ? "Enviando..." : "Donar"}
           </button>
-          {/*error && <p className="text-red-500">Error al enviar</p>*/}
+          {error && <p className="text-red-500">Error al enviar</p>}
         </form>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
@@ -173,7 +218,7 @@ function Support() {
                   <X
                     className="text-gray-300 hover:text-red-500 cursor-pointer"
                     onClick={() => {
-                      //if (d.id !== undefined) handleDelete(d.id);
+                      if (d.id !== undefined) handleDelete(d.id);
                     }}
                   />
                   <Pencil
