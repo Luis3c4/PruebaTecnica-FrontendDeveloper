@@ -50,7 +50,7 @@ function ModalEditar({
   };
   const handleClose = () => {
     onClose();
-    // Reset form when closing
+    // Reset 
     setEditForm({
       name: "",
       email: "",

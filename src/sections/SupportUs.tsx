@@ -9,6 +9,8 @@ import { z } from "zod";
 import { X } from "lucide-react";
 import { Pencil } from "lucide-react";
 import ModalEditar from "@/components/modalEditar";
+import type { Support, Donation } from "@/types/donation";
+import type { ValidationErrors } from "@/utils/validation";
 
 const donationSchema = z.object({
   name: z.string().min(2, "El nombre es obligatorio"),
@@ -17,19 +19,8 @@ const donationSchema = z.object({
   message: z.string().optional(),
 });
 
-type Support = {
-  name: string;
-  email: string;
-  amount: number;
-  message: string;
-};
-type Donation = Support & {
-  id: string;
-};
-type ValidationErrors = {
-  [K in keyof Support]?: string;
-};
-function Support() {
+
+function SupportUs() {
   const [formData, setFormData] = useState<Support>({
     name: "",
     email: "",
@@ -274,4 +265,4 @@ function Support() {
   );
 }
 
-export default Support;
+export default SupportUs;
