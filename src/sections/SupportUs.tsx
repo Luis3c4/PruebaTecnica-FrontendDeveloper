@@ -10,14 +10,8 @@ import { X } from "lucide-react";
 import { Pencil } from "lucide-react";
 import ModalEditar from "@/components/modalEditar";
 import type { Support, Donation } from "@/types/donation";
-import type { ValidationErrors } from "@/utils/validation";
-
-const donationSchema = z.object({
-  name: z.string().min(2, "El nombre es obligatorio"),
-  email: z.email("Correo inválido"),
-  amount: z.number().positive("Monto inválido"),
-  message: z.string().optional(),
-});
+import type { ValidationErrors} from "@/utils/validation";
+import { donationSchema } from "@/utils/donationSchema";
 
 
 function SupportUs() {
