@@ -8,6 +8,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { X } from "lucide-react";
 import { Pencil } from "lucide-react";
+import ModalEditar from "@/components/modalEditar";
 
 const donationSchema = z.object({
   name: z.string().min(2, "El nombre es obligatorio"),
@@ -22,6 +23,9 @@ type Support = {
   amount: number;
   message: string;
 };
+type Donation = Support & {
+  id: string;
+};
 type ValidationErrors = {
   [K in keyof Support]?: string;
 };
@@ -32,6 +36,9 @@ function Support() {
     amount: 0,
     message: "",
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingDonation, setEditingDonation] = useState<Donation | null>(null);
+
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
     {}
   );
@@ -46,8 +53,22 @@ function Support() {
   console.log(donations);
   const [createDonation, { isLoading, error }] = useCreateDonationMutation();
   const [deleteDonation] = useDeleteDonationMutation();
-  // const [updateDonation] = useUpdateDonationMutation();
+   const [updateDonation, { isLoading: isUpdating }] = useUpdateDonationMutation();
+  const handleSaveEdit = async (updatedData: Omit<Donation, "id">) => {
+    if (!editingDonation) return;
 
+    try {
+      await updateDonation({
+        id: editingDonation.id,
+        ...updatedData,
+      }).unwrap();
+
+      handleCloseModal();
+      console.log("Donación actualizada exitosamente");
+    } catch (error) {
+      console.error("Error actualizando donación:", error);
+    }
+  };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -104,6 +125,14 @@ function Support() {
     } catch (err) {
       console.error("Error eliminando donación:", err);
     }
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingDonation(null);
+  };
+  const handleEditClick = (donation: Donation) => {
+    setEditingDonation(donation);
+    setIsModalOpen(true);
   };
   return (
     <div className="max-w-5xl mx-auto">
@@ -204,6 +233,13 @@ function Support() {
           {error && <p className="text-red-500">Error al enviar</p>}
         </form>
       </div>
+      <ModalEditar
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        donation={editingDonation}
+        onSave={handleSaveEdit}
+        isLoading={isUpdating}
+      />
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
         {loadingDonations ? (
           <p className="text-gray-400">Cargando donaciones...</p>
@@ -223,9 +259,7 @@ function Support() {
                   />
                   <Pencil
                     className="text-gray-300 hover:text-blue-500 h-5 cursor-pointer"
-                    onClick={() => {
-                      //handleUpdate(d)
-                    }}
+                    onClick={() => handleEditClick(d as Donation)}
                   />
                 </div>
               </div>

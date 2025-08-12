@@ -15,7 +15,6 @@ function App() {
         <Route path="docs" element={<Docs />} />
         <Route path="support" element={<Suport />} />
         <Route path="character/:id" element={<CharacterDetail />} />
-
       </Route>
     )
   )
