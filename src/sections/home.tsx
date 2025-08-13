@@ -1,5 +1,5 @@
 import Busqueda from "@/components/busqueda";
-import Carts from "@/components/carts";
+import Carts from "@/components/cards/carts";
 import { useState } from "react";
 import { useGetCharactersQuery, useGetCharactersByNameQuery } from "@/api/postApi";
 import Hero from "@/components/Hero";
