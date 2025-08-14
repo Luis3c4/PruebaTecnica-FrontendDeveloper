@@ -12,10 +12,10 @@ export const useDonations = () => {
   const handleCreate = async (data: Support) => {
     return await createDonation(data).unwrap();
   };
-  const handleUpdate = async (id: string, data: Omit<Donation, "id">) => {
+  const handleUpdate = async (id: number, data: Omit<Donation, "id">) => {
     return await updateDonation({ id, ...data }).unwrap();
   };
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     return await deleteDonation(id).unwrap();
   };
   return {

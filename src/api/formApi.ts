@@ -6,12 +6,12 @@ type DonationBase = {
   message: string;
 };
 type Donation = DonationBase & {
-  id: string;
+  id: number;
 };
 export const formApi = createApi({
   reducerPath: "formApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/",
+    baseUrl: "https://x8ki-letl-twmt.n7.xano.io/api:wu6DGMCT",
   }),
   tagTypes: ["Donation"],
   endpoints: (builder) => ({
@@ -27,7 +27,7 @@ export const formApi = createApi({
       }),
       invalidatesTags: ["Donation"],
     }),
-    deleteDonation: builder.mutation<void, string>({
+    deleteDonation: builder.mutation<void, number>({
       query: (id) => ({
         url: `/donations/${id}`,
         method: "DELETE",
@@ -37,7 +37,7 @@ export const formApi = createApi({
     updateDonation: builder.mutation<DonationBase, Donation>({
       query: (donation) => ({
         url: `/donations/${donation.id}`,
-        method: "PUT",
+        method: "PATCH",
         body: donation,
       }),
       invalidatesTags: ["Donation"],

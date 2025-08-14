@@ -2,9 +2,9 @@ import Layout from "./components/layout";
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
 import Docs from "./sections/docs";
 import Home from "./sections/home";
+import Supp from "./sections/supp";
 import About from "./sections/About";
 import CharacterDetail from "./components/CharacterDetail";
-import Supp from "./sections/supp";
 function App() {
 
   const router= createBrowserRouter(

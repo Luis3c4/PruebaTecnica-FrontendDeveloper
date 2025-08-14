@@ -5,5 +5,5 @@ export type Support = {
   message: string;
 };
  export type Donation = Support & {
-  id: string;
+  id: number;
 };

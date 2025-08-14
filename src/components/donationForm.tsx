@@ -1,22 +1,22 @@
 import { useDonationsForm } from "@/hooks/useDonationForm";
-import type { Support } from "@/types/donation";
+import type { Support,Donation } from "@/types/donation";
 import { useEffect } from "react";
-import { Button } from "./ui/button";
 import FormField from "./formField";
+import { Button } from "./ui/button";
 
-interface DonationFormProps {
-  onSubmit: (data: Support) => Promise<Support | void>;
-  isLoading?: boolean;
-  initialData?: Partial<Support>;
-  submitButtonText?: string;
-}
+  interface DonationFormProps {
+    onSubmit: (data: Support) => Promise<Donation | void>;
+    isLoading?: boolean;
+    initialData?: Partial<Support>;
+    submitButtonText?: string;
+  }
 function DonationForm({
   onSubmit,
   isLoading = false,
   initialData,
   submitButtonText = "Enviar",
 }: DonationFormProps) {
-    const {formData,setFormData ,validationErrors, handleSubmit, handleChange} = useDonationsForm(onSubmit);
+    const {formData,setFormData, validationErrors, handleSubmit, handleChange} = useDonationsForm(onSubmit);
     // Efecto para cargar datos iniciales
   useEffect(() => {
     if (initialData) {
@@ -32,7 +32,6 @@ function DonationForm({
         onChange={handleChange}
         error={validationErrors.name}
       />
-      
       <FormField
         name="email"
         type="email"
@@ -41,7 +40,6 @@ function DonationForm({
         onChange={handleChange}
         error={validationErrors.email}
       />
-      
       <FormField
         name="amount"
         type="number"
@@ -50,7 +48,6 @@ function DonationForm({
         onChange={handleChange}
         error={validationErrors.amount}
       />
-      
       <FormField
         name="message"
         as="textarea"
@@ -59,7 +56,6 @@ function DonationForm({
         onChange={handleChange}
         error={validationErrors.message}
       />
-      
       <Button
         type="submit"
         disabled={isLoading}

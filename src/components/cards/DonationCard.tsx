@@ -4,7 +4,7 @@ import { Pencil, X } from "lucide-react";
 interface DonationCardProps {
   donation: Donation;
   onEdit?: (donation: Donation) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: (id: number) => void;
   showActions?: boolean;
   className?: string;
 }

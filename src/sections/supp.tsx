@@ -1,7 +1,7 @@
 import DonationGrid from "@/components/contend/donationGrid";
 import SupportHeader from "@/components/contend/supportHeader";
 import DonationForm from "@/components/donationForm";
-import EditDonationModal from "@/components/EditDonationModal";
+import EditDonationModal from "@/components/contend/EditDonationModal";
 import { useDonations } from "@/hooks/useDonations";
 import type { Donation } from "@/types/donation";
 import { useState } from "react";

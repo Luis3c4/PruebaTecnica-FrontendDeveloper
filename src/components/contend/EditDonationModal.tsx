@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import DonationForm from "./donationForm";
+import DonationForm from "../donationForm";
 
 interface EditDonationModalProps {
   isOpen: boolean;
@@ -22,7 +22,7 @@ function EditDonationModal({
   onSave,
   isLoading = false,
 }: EditDonationModalProps) {
-    const handleFormSubmit = async (data: Support) => {
+  const handleFormSubmit = async (data: Support) => {
     await onSave(data);
     onClose();
   };

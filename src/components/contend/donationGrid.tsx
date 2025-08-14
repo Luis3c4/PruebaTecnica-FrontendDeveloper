@@ -1,12 +1,14 @@
 import type { Donation } from "@/types/donation";
 import DonationCard from "../cards/DonationCard";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import type { SerializedError } from "@reduxjs/toolkit";
 
 interface DonationGridProps {
   donations: Donation[];
   loading?: boolean;
-  error?: any;
+  error?: FetchBaseQueryError | SerializedError | undefined;
   onEdit?: (donation: Donation) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: (id: number) => void;
   className?: string;
   emptyMessage?: string;
   gridCols?: {
