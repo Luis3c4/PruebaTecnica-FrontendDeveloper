@@ -1,3 +1,4 @@
+import { useGetCharacterByIdQuery } from "@/api/postApi";
 import type { Donation } from "@/types/donation";
 import { Pencil, X } from "lucide-react";
 
@@ -15,6 +16,8 @@ function DonationCard({
   showActions = true,
   className = "",
 }: DonationCardProps) {
+  const { data: character, isLoading } = useGetCharacterByIdQuery(donation.id);
+
   return (
     <div className={`bg-gray-700 p-4 rounded-lg ${className}`}>
       <div className="flex justify-between items-center">
@@ -37,7 +40,9 @@ function DonationCard({
           </div>
         )}
       </div>
-
+      <p>
+        Personaje:{isLoading ? "Cargando..." : character?.name || "Desconocido"}
+      </p>
       <p className="text-sm text-gray-300">{donation.email}</p>
       <p className="text-green-400 font-bold">Donó: ${donation.amount}</p>
       {donation.message && (

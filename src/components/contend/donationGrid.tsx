@@ -102,7 +102,7 @@ function DonationGrip({
 
       {/* Footer con información adicional */}
       {donations.length > 0 && (
-        <div className="mt-6 text-center text-sm text-gray-500">
+        <div className="mt-6 text-center p-6 text-sm text-gray-500">
           Mostrando {donations.length} de {donations.length} donaciones
         </div>
       )}

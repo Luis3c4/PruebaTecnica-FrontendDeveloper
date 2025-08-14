@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import NavButton from "../navButton";
+import NavButton from "../contend/navButton";
 
 type Character = {
   id: number;
