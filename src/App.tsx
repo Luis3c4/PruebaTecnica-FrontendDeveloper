@@ -2,9 +2,9 @@ import Layout from "./components/layout";
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
 import Docs from "./sections/docs";
 import Home from "./sections/home";
-import SuportUs from "./sections/SupportUs";
 import About from "./sections/About";
 import CharacterDetail from "./components/CharacterDetail";
+import Supp from "./sections/supp";
 function App() {
 
   const router= createBrowserRouter(
@@ -13,7 +13,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="about" element={<About />} />
         <Route path="docs" element={<Docs />} />
-        <Route path="support" element={<SuportUs />} />
+        <Route path="support" element={<Supp />} />
         <Route path="character/:id" element={<CharacterDetail />} />
       </Route>
     )

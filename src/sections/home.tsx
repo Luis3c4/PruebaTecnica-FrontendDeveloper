@@ -1,4 +1,4 @@
-import Busqueda from "@/components/busqueda";
+import Busqueda from "@/components/contend/busqueda";
 import Carts from "@/components/cards/carts";
 import { useState } from "react";
 import { useGetCharactersQuery, useGetCharactersByNameQuery } from "@/api/postApi";

@@ -1,10 +1,10 @@
-import type { Support, Donation } from "@/types/donation";
+import type { Support } from "@/types/donation";
 import type { ValidationErrors } from "@/utils/validation";
 import { donationSchema } from "@/utils/donationSchema";
 import { useState } from "react";
 import { z } from "zod";
 export const useDonationsForm = (
-  onSubmit: (data: Support) => Promise<void>
+  onSubmit: (data: Support) => Promise<Support | void>
 ) => {
   const [formData, setFormData] = useState<Support>({
     name: "",
@@ -55,6 +55,7 @@ export const useDonationsForm = (
   };
   return {
     formData,
+    setFormData,
     validationErrors,
     handleSubmit,
     handleChange,
